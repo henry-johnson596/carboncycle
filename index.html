@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carbon Cycle Learning Hub | Year 9 Science</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Lora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f0e8;--card:#fffaf0;--ink:#3b3228;--mut:#7a6d5f;--line:#e4d9c6}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 'DM Sans',system-ui,sans-serif}
+h1,h2,h3{font-family:Lora,Georgia,serif;margin:.2em 0}
+nav{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;gap:6px;padding:8px 12px;flex-wrap:wrap;align-items:center}
+nav b{font-family:Lora,serif;margin-right:auto}nav button{border:0;background:none;padding:8px 14px;border-radius:20px;font:inherit;cursor:pointer;color:var(--mut)}
+nav button.on{background:#c98b6b;color:#fff}main{max-width:960px;margin:auto;padding:18px;animation:in .35s}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.btn{display:block;width:100%;text-align:left;border:0;border-radius:14px;padding:14px 16px;margin:8px 0;font:inherit;font-weight:500;cursor:pointer;background:#e9dfcd;color:var(--ink);text-decoration:none;transition:transform .1s}
+.btn:active{transform:scale(.97)}.btn.p{background:#c98b6b;color:#fff}.btn.off{opacity:.55;cursor:default}
+.bar{height:10px;background:#eadfcb;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:#8fa77f;transition:width .5s}
+.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{flex:1;min-width:110px;text-align:center}.stat b{font-size:1.5em;display:block;font-family:Lora,serif}
+.pill{display:inline-block;padding:2px 10px;border-radius:12px;background:#eadfcb;font-size:.85em}
+.flip{perspective:900px;height:230px;cursor:pointer}.flip div{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.flip.f div{transform:rotateY(180deg)}.flip p{position:absolute;inset:0;margin:0;backface-visibility:hidden;border-radius:16px;padding:22px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.15em;background:var(--card);border:2px solid var(--line)}
+.flip p+p{transform:rotateY(180deg);background:#eef2e6}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--card);font:inherit;cursor:pointer}
+.opt.ok{background:#dcebd2;border-color:#8fa77f}.opt.no{background:#f3d9d0;border-color:#c98b6b}
+.badge{text-align:center;padding:10px;border-radius:14px;background:var(--card);border:1px solid var(--line)}.badge.lock{opacity:.45;filter:grayscale(1)}
+#toast{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px;z-index:20}
+.t{background:#3b3228;color:#fff;padding:10px 16px;border-radius:12px;animation:in .3s}
+.modal{position:fixed;inset:0;background:#3b3228cc;display:flex;align-items:center;justify-content:center;z-index:30;padding:16px}
+.modal .card{max-width:440px;text-align:center}.modal .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.modal .row button{width:64px}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;background:var(--card)}summary{cursor:pointer;font-weight:700}
+select{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line)}
+</style></head><body>
+<nav><b>🌏 Carbon Cycle Hub</b><button data-p="home">Home</button><button data-p="learn">Learn</button><button data-p="res">Resources</button><button data-p="task">Tasks</button><button data-p="prog">Progress</button></nav>
+<main id="app"></main><div id="toast"></div>
+<script>
+/* ===== TEACHER EDIT ZONE: paste Google Slides/Docs/YouTube links between the quotes ===== */
+const RES={
+ climate:{slides:"",video:"https://www.youtube.com/watch?v=ztWHqUFJRTs",test:"",answers:""},
+ carbon:{slides:"",video:"https://www.youtube.com/watch?v=A4cPmHGegKI",test:"",answers:""},
+ spheres:{slides:"https://docs.google.com/presentation/d/1545Oerc7LHCKl-Y1GA3ocs0WoZLackdX/edit?usp=drive_link",video:"",test:"",answers:""},
+ photo:{slides:"",video:"https://www.youtube.com/watch?v=rXzN89I4_Yk",test:"",answers:""},
+ resp:{slides:"",video:"",test:"",answers:""}};
+const TASKS=[
+ {name:"Task 1 (placeholder)",type:"Investigation",topic:"Photosynthesis and respiration",cond:"Conditions to be added",detail:"Task sheet, rubric and due date to be added.",link:""},
+ {name:"Task 2 (placeholder)",type:"Test",topic:"Carbon cycle model",cond:"Conditions to be added",detail:"Details to be added.",link:""}];
+const TEACHER_NOTE="Your teacher is away. Work through the topics in order, and ask the relief teacher if you get stuck.";
+const SUBMIT={climate:"https://docs.google.com/document/d/1twl5lgqRoGEQWwBqmeZ-yCRvEj3VPaT3/copy",carbon:"https://docs.google.com/document/d/1Uedc6Fv_AzoAOcr5WbhoWOqP05yVpQRz/copy",spheres:"https://docs.google.com/document/d/1nv9Yzkm9d6JFTzjiMnp6op5Lyp3BQ2tF/copy",photo:"https://docs.google.com/document/d/1nGJQODcAQNG2U4MAXCle9jlZmJNFY19v/copy",resp:"https://docs.google.com/document/d/168_aUud6wmo9J_be8rEfUr7Og9-PpBbp/copy"};/* paste a Google Doc/Slides template link for each task */
+/* ========================================================================================== */
+const T=[
+{id:"climate",name:"Climate Change",ic:"🌡️",col:"#b58f9a",
+ intro:{sup:"Earth is getting warmer. Humans are adding gases to the air that trap heat. This topic explains why.",core:"Climate change is a long-term warming of Earth. In this topic you will learn what it is, how the greenhouse effect works and how human activities add to it.",ext:"Climate change refers to sustained shifts in global temperature and weather patterns. Since the Industrial Revolution, human activities have amplified the natural greenhouse effect by adding greenhouse gases faster than natural processes can remove them."},
+ cards:[["Weather vs climate","Weather is today. Climate is the pattern over many years.","Weather is the short-term state of the atmosphere. Climate is the average pattern of weather over 30 years or more."],
+ ["Climate change","A long-term change in Earth's usual temperatures and weather.","A long-term shift in average temperatures and weather patterns, now mostly driven by human activity."],
+ ["Greenhouse effect","Gases in the air trap some heat and keep Earth warm enough for life.","A natural process where greenhouse gases absorb and re-emit heat, keeping Earth's average temperature liveable."],
+ ["Greenhouse gases","Gases that trap heat, like carbon dioxide and methane.","Gases such as carbon dioxide, methane, nitrous oxide and water vapour that absorb infrared radiation."],
+ ["Human contributions","Burning coal, oil and gas, clearing forests and farming add extra gases.","Burning fossil fuels, land clearing and agriculture add greenhouse gases faster than natural processes remove them."],
+ ["Mitigation","Actions that cut greenhouse gases, like solar power and planting trees.","Actions that reduce greenhouse gas emissions or increase carbon sinks, such as renewable energy and reforestation."]],
+ qs:[["Which statement describes climate?",["It rained in Adelaide this morning","Adelaide usually has hot, dry summers","A storm hit yesterday","Tomorrow will be windy"],1,"Climate is the long-term pattern. The others describe weather."],
+ ["Which of these is a greenhouse gas?",["Nitrogen","Oxygen","Methane","Argon"],2,"Methane traps heat. Nitrogen and oxygen make up most of the air but do not trap much heat."],
+ ["Which human activity adds the most CO₂ to the atmosphere?",["Burning fossil fuels","Breathing","Planting trees","Using wind turbines"],0,"Burning fossil fuels for electricity, transport and industry is the largest source."],
+ ["The natural greenhouse effect is...",["harmful and should be removed","needed to keep Earth warm enough for life","caused only by humans","only caused by clouds"],1,"Without it Earth would be far too cold. The problem is the extra gases we add."],
+ ["Which action is an example of mitigation?",["Building a sea wall","Switching to solar power","Buying an air conditioner","Moving inland"],1,"Mitigation reduces emissions. The other options help us cope with change, which is called adaptation."]]},
+{id:"carbon",name:"The Carbon Cycle",ic:"♻️",col:"#c98b6b",
+ intro:{sup:"Carbon is in everything. It moves between air, water, rocks and living things.",core:"Carbon moves between Earth's stores in a never-ending cycle. Some steps are fast and some take millions of years.",ext:"The carbon cycle links fast biological exchanges with slow geological ones. Human activity is now moving carbon from long-term stores into the atmosphere faster than natural sinks can absorb it."},
+ cards:[["Carbon cycle","How carbon moves around Earth again and again.","The continuous movement of carbon between the atmosphere, biosphere, hydrosphere and geosphere."],
+ ["Carbon sink","Something that soaks up more carbon than it lets out.","A reservoir that absorbs more carbon than it releases, such as forests, oceans and soil."],
+ ["Carbon source","Something that puts carbon into the air.","A process or reservoir that releases more carbon than it absorbs, such as burning fossil fuels."],
+ ["Fossil fuels","Coal, oil and gas made from ancient dead plants and animals.","Carbon-rich fuels formed over millions of years from buried organisms, storing ancient carbon in the geosphere."],
+ ["Carbon reservoir","A place where carbon is stored for a while.","A store of carbon, such as the atmosphere, oceans, living things, soil and rocks."],
+ ["Enhanced greenhouse effect","Extra carbon dioxide traps more heat and warms Earth.","Extra atmospheric CO₂ from human activity traps more heat, raising global temperatures."]],
+ qs:[["Which is an example of a carbon sink?",["A coal power station","A growing forest","A car exhaust","A bushfire"],1,"Growing forests take in more CO₂ than they release."],
+ ["Fossil fuels store carbon in which sphere?",["Atmosphere","Hydrosphere","Geosphere","Biosphere"],2,"Coal, oil and gas are buried in rocks, so they are part of the geosphere."],
+ ["Burning fossil fuels moves carbon from the...",["geosphere to the atmosphere","atmosphere to the ocean","biosphere to the geosphere","ocean to rocks"],0,"Ancient stored carbon is released into the air as CO₂."],
+ ["Which best describes a carbon reservoir?",["A gas that traps heat","A store of carbon","A type of fuel","A plant cell part"],1,"A reservoir is any place carbon is held, such as air, oceans or rocks."],
+ ["Why is extra CO₂ in the atmosphere a concern?",["It makes plants smaller","It traps more heat","It removes oxygen","It cools the oceans"],1,"CO₂ is a greenhouse gas, so more of it warms Earth."]]},
+{id:"spheres",name:"Earth's Spheres",ic:"🌍",col:"#8fa77f",
+ intro:{sup:"Earth has four systems: rock, water, air and living things. They all share carbon.",core:"The geosphere, hydrosphere, atmosphere and biosphere constantly exchange carbon. No sphere works alone.",ext:"Carbon transfers between spheres occur across very different timescales, from seconds (gas exchange in leaves) to millions of years (limestone formation). Interactions can amplify or reduce change."},
+ cards:[["Geosphere","The rocks, soil and land of Earth.","Earth's solid parts, including rocks, soil, minerals and fossil fuels."],
+ ["Biosphere","All living things.","All living organisms and the parts of Earth where they live."],
+ ["Hydrosphere","All the water on Earth.","All water on Earth, including oceans, lakes, rivers, groundwater and ice."],
+ ["Atmosphere","The layer of gases around Earth.","The layer of gases surrounding Earth, including nitrogen, oxygen and carbon dioxide."],
+ ["Sphere interaction","When two spheres affect each other.","An exchange of matter or energy between spheres, such as CO₂ dissolving from the air into the ocean."],
+ ["Limestone formation","Sea animals build shells from carbon. Shells turn into rock.","Marine organisms make calcium carbonate shells, which settle and become limestone, storing carbon in the geosphere."]],
+ qs:[["Which sphere includes rivers and oceans?",["Geosphere","Hydrosphere","Atmosphere","Biosphere"],1,"Hydro means water."],
+ ["A gum tree takes in CO₂ from the air. Which two spheres interact?",["Geosphere and hydrosphere","Biosphere and atmosphere","Hydrosphere and atmosphere","Geosphere and biosphere"],1,"The tree is biosphere and the CO₂ comes from the atmosphere."],
+ ["CO₂ dissolving into the sea is an interaction between...",["atmosphere and hydrosphere","biosphere and geosphere","geosphere and atmosphere","biosphere and biosphere"],0,"Gas moves from the air into water."],
+ ["Limestone is mostly carbon stored in the...",["Atmosphere","Biosphere","Geosphere","Hydrosphere"],2,"Limestone is rock, and rock belongs to the geosphere."],
+ ["Which sphere holds carbon for the longest time?",["Atmosphere","Living things","Geosphere","Clouds"],2,"Carbon in rocks can stay locked away for millions of years."]]},
+{id:"photo",name:"Photosynthesis",ic:"🌿",col:"#7f9bb5",
+ intro:{sup:"Plants use sunlight to turn CO₂ and water into food (glucose) and oxygen.",core:"Photosynthesis moves carbon from the atmosphere into the biosphere. Plants store it as glucose.",ext:"Photosynthesis is the main pathway that transfers atmospheric carbon into the biosphere, converting light energy into chemical energy. It links the atmosphere (CO₂), hydrosphere (water) and biosphere (plants)."},
+ cards:[["Photosynthesis equation","carbon dioxide + water + light gives glucose + oxygen.","6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂"],
+ ["Chloroplast","The green part of a plant cell where food is made.","The organelle containing chlorophyll where photosynthesis occurs."],
+ ["Chlorophyll","The green stuff that catches sunlight.","The green pigment that absorbs light energy for photosynthesis."],
+ ["Glucose","A sugar plants make for energy.","A carbohydrate produced in photosynthesis that stores chemical energy and carbon."],
+ ["Producer","Something that makes its own food.","An organism, such as a plant or algae, that makes its own food by photosynthesis."],
+ ["Photosynthesis and the spheres","Plants take CO₂ from air and water from the ground.","Photosynthesis takes CO₂ from the atmosphere and water from the hydrosphere or geosphere into the biosphere."]],
+ qs:[["What are the reactants of photosynthesis?",["Glucose and oxygen","Carbon dioxide and water","Oxygen and water","Glucose and CO₂"],1,"Plants take in CO₂ and water."],
+ ["Where in the cell does photosynthesis happen?",["Nucleus","Mitochondria","Chloroplast","Cell wall"],2,"Chloroplasts contain chlorophyll."],
+ ["Photosynthesis transfers carbon from the...",["biosphere to atmosphere","atmosphere to biosphere","geosphere to hydrosphere","ocean to rock"],1,"CO₂ from the air becomes glucose in the plant."],
+ ["What energy source drives photosynthesis?",["Heat","Light","Sound","Wind"],1,"Light energy is converted to chemical energy in glucose."],
+ ["Which is NOT a product of photosynthesis?",["Glucose","Oxygen","Carbon dioxide","Chemical energy"],2,"CO₂ is a reactant, not a product."]]},
+{id:"resp",name:"Respiration and Combustion",ic:"🔥",col:"#b8a06a",
+ intro:{sup:"Living things and fires both release CO₂. Respiration is slow and inside cells. Combustion is burning.",core:"Respiration and combustion both release carbon back to the atmosphere as CO₂. Respiration happens in living cells and combustion happens in fires and engines.",ext:"Cellular respiration and combustion are both exothermic oxidation reactions that return carbon to the atmosphere, but respiration is enzyme-controlled and occurs at body temperature, while combustion is rapid and uncontrolled."},
+ cards:[["Respiration equation","glucose + oxygen gives carbon dioxide + water + energy.","C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + energy"],
+ ["Mitochondria","The part of a cell that releases energy from food.","The organelle where aerobic respiration releases energy from glucose."],
+ ["Combustion","Burning something with oxygen.","A rapid reaction between a fuel and oxygen that releases heat, light and CO₂."],
+ ["Decomposition","Bacteria and fungi break down dead things.","Decomposers break down dead organisms, releasing CO₂ through respiration."],
+ ["Respiration vs combustion","Both make CO₂ but respiration is slow and happens in cells.","Both release CO₂ and energy. Respiration is controlled by enzymes in cells, while combustion is rapid burning."],
+ ["Respiration and the spheres","Living things breathe out CO₂ into the air.","Respiration moves carbon from the biosphere to the atmosphere (or hydrosphere for aquatic organisms)."]],
+ qs:[["Which process releases CO₂ inside living cells?",["Photosynthesis","Respiration","Condensation","Erosion"],1,"Cells release energy from glucose and make CO₂."],
+ ["What is needed for combustion?",["Fuel and oxygen","Water and light","Glucose and chlorophyll","Soil and CO₂"],0,"Fuel needs oxygen to burn."],
+ ["Which is a product of both respiration and combustion?",["Glucose","Oxygen","Carbon dioxide","Chlorophyll"],2,"Both release CO₂."],
+ ["Decomposers return carbon to the atmosphere by...",["photosynthesis","respiration","evaporation","freezing"],1,"They respire as they break down dead material."],
+ ["A bushfire moves carbon mainly from the...",["biosphere to atmosphere","atmosphere to biosphere","hydrosphere to geosphere","geosphere to hydrosphere"],0,"Burning plants release stored carbon as CO₂."]]}];
+const T5={
+climate:{t:"My carbon footprint",
+ sup:["Do the footprint calculator from Step 2. Take a screenshot of your result. Then write 5 sentences using the sentence starters.",["Screenshot of my result","Named my 2 biggest contributors","Named 1 action I can take","Wrote 5 sentences"],"My footprint result was...<br>My two biggest contributors were...<br>These add greenhouse gases because...<br>One action I can take is...<br>This would help because..."],
+ core:["Do the footprint calculator from Step 2 and screenshot your result. Write a paragraph (6 to 8 sentences) explaining your two biggest contributors, how they add greenhouse gases, and one realistic action to reduce them.",["Screenshot of my result","Explained 2 biggest contributors","Explained how they add greenhouse gases","Described 1 realistic action","Used the words fossil fuels, greenhouse gases and mitigation"],""],
+ ext:["Do the footprint calculator and screenshot your result. Write an analysis of your two biggest contributors. Evaluate two actions (one personal, one by a community or government) and justify which would reduce emissions more.",["Screenshot of my result","Analysed 2 biggest contributors","Evaluated 2 actions","Justified which is more effective with evidence","Used scientific terms accurately"],""]},
+carbon:{t:"My carbon cycle diagram",
+ sup:["Draw a carbon cycle diagram on paper or in Google Drawings. Show the atmosphere, plants and animals, the ocean and fossil fuels. Add labelled arrows for photosynthesis, respiration and combustion. Take a clear photo or screenshot.",["4 stores labelled","3 processes labelled","Arrows point the right way","Photo is clear and easy to read"],"Word bank: atmosphere, ocean, plants, animals, fossil fuels, CO₂, photosynthesis, respiration, combustion"],
+ core:["Draw a carbon cycle diagram showing at least 4 stores and 4 processes (add decomposition or ocean absorption). Write a 3 sentence caption explaining how carbon moves between two stores.",["4 stores labelled","4 processes labelled","Arrows show direction","Caption of 3 sentences","Photo is clear"],""],
+ ext:["Draw a carbon cycle diagram with at least 5 processes. Label each arrow with the spheres it moves carbon between. Write a paragraph explaining how human activity changes one arrow and what effect this has.",["5 processes labelled","Each arrow names the two spheres","Explained a human impact on one arrow","Explained the effect","Photo is clear"],""]},
+spheres:{t:"Sphere interactions table",
+ sup:["Make a table with 3 columns: Example, Spheres involved, What happens to carbon. Fill in 4 rows. Use these examples: a gum tree, a bushfire, the ocean, limestone rock.",["Table has 3 columns","4 rows filled in","Used the sphere names correctly"],"Example row: A gum tree | biosphere and atmosphere | It takes in CO₂ from the air.<br>Spheres: geosphere, biosphere, hydrosphere, atmosphere"],
+ core:["Make a table with 3 columns: Example, Spheres involved, What happens to carbon. Fill in 5 rows using your own examples. Include at least one with the hydrosphere and one with the geosphere.",["Table has 3 columns","5 rows filled in","One hydrosphere example","One geosphere example","Named the process where possible"],""],
+ ext:["Make a table with 4 columns: Example, Spheres involved, What happens to carbon, Timescale (fast or slow). Fill in 6 rows. Then write 3 sentences explaining one interaction that affects a third sphere.",["4 columns","6 rows filled in","Timescale justified","3 sentence explanation of a knock-on effect"],""]},
+photo:{t:"Photosynthesis simulation report",
+ sup:["Use the simulation from Step 2. Take a screenshot of your results. Then answer the three questions below in full sentences.",["Screenshot of my results","Said what I changed","Said what happened","Wrote the word equation"],"I changed...<br>I saw that...<br>The word equation is: carbon dioxide + water + light gives glucose + oxygen."],
+ core:["Use the simulation from Step 2 and screenshot your results. Write what you changed, what happened, and the photosynthesis equation. Say which sphere each reactant and product comes from.",["Screenshot of my results","Described what I changed and observed","Wrote the equation (words or symbols)","Named a sphere for each reactant and product"],""],
+ ext:["Use the simulation and screenshot your results. Write the equation with symbols. Explain how changing one variable affects the rate. Then predict what happens to atmospheric CO₂ if large areas of forest are removed and explain your reasoning.",["Screenshot of my results","Symbol equation correct","Explained the effect of one variable","Prediction linked to the carbon cycle","Reasoning uses evidence from the simulation"],""]},
+resp:{t:"Respiration vs combustion table",
+ sup:["Make a table comparing respiration and combustion. Rows: equation in words, where it happens, fast or slow, what is released. Finish with one sentence about why both matter.",["Table has 2 columns (one per process)","4 rows filled in","Wrote 1 finishing sentence"],"Both processes are important for the carbon cycle because...<br>Word bank: glucose, oxygen, fuel, cells, CO₂, energy, heat"],
+ core:["Make a table comparing respiration and combustion. Rows: equation, where it happens, speed, what is released, and which spheres carbon moves between. Finish with 3 to 4 sentences on why both matter to the carbon cycle.",["Both processes compared in 5 rows","Equations correct","Named the spheres","3 to 4 sentence conclusion"],""],
+ ext:["Make a table comparing respiration and combustion with symbol equations, and a row on controlled versus uncontrolled release of energy. Write a paragraph evaluating how burning fossil fuels differs from respiration in its effect on the carbon cycle over time.",["Symbol equations correct","Controlled versus uncontrolled row","Paragraph compares the timescales of carbon release","Linked to climate change"],""]}};
+const LINKS={
+ climate:[["🔬 PhET: Greenhouse Effect simulation","https://phet.colorado.edu/en/simulations/greenhouse-effect","Change the gases and clouds and see what happens to temperature."],["🕰️ NASA Climate Time Machine","https://climate.nasa.gov/interactives","See how sea ice, sea level, CO₂ and temperature have changed over time."],["🧮 Carbon footprint calculator","https://carbonpositiveaustralia.org.au/calculate/","Estimate your household footprint using Australian data."]],
+ carbon:[["🌎 NASA Climate Kids: greenhouse effect and carbon cycle","https://climatekids.nasa.gov/greenhouse-effect-and-carbon-cycle/","Short explanations and games about carbon's journey."],["🎬 NASA video: The Carbon Cycle","https://nasaeclips.arc.nasa.gov/video/realworld/real-world-the-carbon-cycle-essential-for-life-on-earth","Why the carbon cycle is essential for life on Earth."]],
+ photo:[["🧪 Photosynthesis virtual lab (Amrita OLabs)","https://amrita.olabs.edu.in/?sub=79&brch=16&sim=126&cnt=4","Run the photosynthesis simulation and record what you observe."]],
+ spheres:[["🌎 NASA Climate Kids","https://climatekids.nasa.gov/","Explore Earth's systems with games and short readings."]]};
+const BADGES=[["🌱","First Steps","Earn your first XP",s=>s.xp>0],["⭐","Rising Star","Reach 200 XP",s=>s.xp>=200],["🚀","Level 3","Reach level 3",s=>lvl(s.xp)>=3],["🔥","3-Day Streak","Learn 3 days in a row",s=>s.streak>=3],["🏆","Week Warrior","7-day streak",s=>s.streak>=7],["🃏","Card Collector","Master 15 flashcards",s=>Object.keys(s.known).length>=15],["⚔️","Boss Slayer","Defeat any boss",s=>Object.keys(s.boss).length>=1],["👑","Carbon Champion","Defeat all 5 bosses",s=>Object.keys(s.boss).length>=5],["🎯","Sharp Shooter","Perfect quiz",s=>s.perfect],["📚","Topic Master","90% accuracy on a topic (5+ answers)",s=>T.some(t=>{const p=s.prog[t.id];return p&&p.t>=5&&p.c/p.t>=.9})]];
+const KEY="carbonHubY9";let S={eng:"",xp:0,streak:0,last:"",known:{},boss:{},prog:{},badges:{},perfect:false,lastAct:null,chk:{},sub:{}};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){}
+const $=id=>document.getElementById(id),lvl=x=>Math.floor(x/500)+1,shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const LV=()=>({A:"ext",B:"ext",C:"core",D:"sup",E:"sup"}[S.eng]||"core"),LVN={sup:"Support",core:"Core",ext:"Extension"};
+const day=d=>d.toISOString().slice(0,10);
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function toast(m){const d=document.createElement("div");d.className="t";d.textContent=m;$("toast").append(d);setTimeout(()=>d.remove(),3500)}
+function streak(){const t=day(new Date()),y=day(new Date(Date.now()-864e5));if(S.last===t)return;S.streak=S.last===y?S.streak+1:1;S.last=t;save()}
+function xp(n){const o=lvl(S.xp);S.xp+=n;if(lvl(S.xp)>o)toast("🎉 Level up! You are now level "+lvl(S.xp));BADGES.forEach(b=>{if(!S.badges[b[1]]&&b[3](S)){S.badges[b[1]]=1;toast(b[0]+" Badge unlocked: "+b[1])}});save()}
+function rec(tid,ok){const p=S.prog[tid]||(S.prog[tid]={c:0,t:0});p.t++;if(ok)p.c++}
+function tag(){return T.reduce((a,t)=>a.concat(t.qs.map(q=>({tid:t.id,q}))),[])}
+let cur="home";
+function go(p){cur=p;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));render()}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.p));
+function render(){const a=$("app");a.style.animation="none";a.offsetHeight;a.style.animation="";if(cur==="topic")return;({home,learn,res,task,prog})[cur]()}
+function gate(){const m=document.createElement("div");m.className="modal";m.innerHTML='<div class="card"><h2>Welcome! 👋</h2><p>What was your most recent English grade? This adjusts the reading level of the hub for you. You can change it later on the Home page.</p><div class="row">'+["A","B","C","D","E"].map(g=>'<button class="btn p" data-g="'+g+'">'+g+'</button>').join("")+'</div></div>';document.body.append(m);m.querySelectorAll("button").forEach(b=>b.onclick=()=>{S.eng=b.dataset.g;save();m.remove();go("home")})}
+function home(){streak();const h=new Date().getHours(),g=h<12?"Good morning":h<17?"Good afternoon":"Good evening",x=S.xp%500,b=Object.keys(S.badges).length;
+let h5='<h1>'+g+'! 🌏</h1><p>'+TEACHER_NOTE+'</p><div class="card stats"><div class="stat"><b>Lv '+lvl(S.xp)+'</b>Level</div><div class="stat"><b>'+S.xp+'</b>XP</div><div class="stat"><b>🔥 '+S.streak+'</b>Day streak</div><div class="stat"><b>'+b+'/'+BADGES.length+'</b>Badges</div></div><div class="bar"><i style="width:'+x/5+'%"></i></div><small>'+(500-x)+' XP to next level</small>';
+const nx=T.find(t=>!S.boss[t.id])||T[0],st=t=>t.cards.some((c,i)=>S.known[t.id+i])||S.boss[t.id]||(S.prog[t.id]||{}).t;
+h5+='<div class="card" style="background:#f0e3d0;text-align:center"><h2>Start here 👇</h2><p>Follow the learning path below, one topic at a time.</p><button class="btn p" style="text-align:center;font-size:1.2em" onclick="topic(\''+nx.id+'\')">▶ '+(st(nx)?"Continue":"Start")+': '+nx.name+'</button></div><h2>Your learning path</h2>';
+T.forEach((t,i)=>{const k=t.cards.filter((c,j)=>S.known[t.id+j]).length,pc=Math.round(k/t.cards.length*100),lab=S.boss[t.id]?"✅ Complete":t===nx?"▶ Up next":"Not started";h5+='<div class="card" style="border-left:8px solid '+t.col+';cursor:pointer" onclick="topic(\''+t.id+'\')"><span class="pill">Topic '+(i+1)+'</span> <span class="pill">'+lab+'</span><h3>'+t.ic+' '+t.name+'</h3><p>'+t.intro[LV()]+'</p><div class="bar"><i style="width:'+pc+'%"></i></div><small>'+pc+'% of flashcards mastered</small></div>'});
+h5+='</div><p>Reading level: <span class="pill">'+LVN[LV()]+'</span> <button class="opt" style="width:auto;display:inline-block" onclick="S.eng=\'\';save();gate()">Change</button></p>';$("app").innerHTML=h5}
+const step=(n,h,d,b)=>'<div class="card"><h3><span class="pill">Step '+n+'</span> '+h+'</h3><p>'+d+'</p>'+b+'</div>';
+const step5=id=>{const K=T5[id],l=LV(),d=K[l],tp=SUBMIT[id]?'<a class="btn" target="_blank" rel="noopener" href="'+SUBMIT[id]+'">📄 Open the template (make your own copy)</a>':'<div class="btn off">📄 Template (coming soon)</div>';
+return step(5,"Submit to Daymap","<b>"+K.t+"</b> <span class=\"pill\">"+LVN[l]+" level</span><br>Submit to Daymap under the task name <b>Week 1 Work</b>.",'<p>'+d[0]+'</p>'+(d[2]?'<div class="card" style="background:#eef2e6"><b>Help box</b><br>'+d[2]+'</div>':'')+'<b>Checklist before you submit</b>'+d[1].map((c,i)=>'<label style="display:block;margin:6px 0"><input type="checkbox" '+(S.chk[id+l+i]?"checked":"")+' onchange="chk(\''+id+l+i+'\',this.checked)"> '+c+'</label>').join("")+tp+'<button class="btn" onclick="subm(\''+id+'\')">'+(S.sub[id]?"✅ Submitted":"I have submitted this (+50 XP)")+'</button>')};
+function chk(k,v){S.chk[k]=v?1:0;save()}
+function subm(id){if(!S.sub[id]){S.sub[id]=1;xp(50)}save();topic(id)}
+function topic(id){const t=T.find(x=>x.id===id),i=T.indexOf(t),r=RES[id],L=LINKS[id]||[],k=t.cards.filter((c,j)=>S.known[id+j]).length,nt=T[i+1];S.lastAct=id;save();cur="topic";document.querySelectorAll("nav button").forEach(b=>b.classList.remove("on"));
+$("app").innerHTML='<button class="opt" style="width:auto" onclick="go(\'home\')">← Back to learning path</button><h1>'+t.ic+' Topic '+(i+1)+': '+t.name+'</h1><p>'+t.intro[LV()]+'</p>'
++step(1,"Learn","Read or watch the lesson.",(r.slides?'<a class="btn p" target="_blank" rel="noopener" href="'+r.slides+'">📊 Open slides</a>':(r.video?"":'<div class="btn off">📊 Lesson (coming soon)</div>'))+(r.video?'<a class="btn p" target="_blank" rel="noopener" href="'+r.video+'">🎬 Watch the video</a>':""))
++step(2,"Explore","Try these interactive activities. They open in a new tab.",L.map(l=>'<a class="btn" target="_blank" rel="noopener" href="'+l[1]+'">'+l[0]+'<br><small>'+l[2]+'</small></a>').join("")||'<div class="btn off">Activities coming soon</div>')
++step(3,"Practise","Flashcards mastered: "+k+" of "+t.cards.length,'<button class="btn p" onclick="flash(\''+id+'\')">🃏 Flashcards</button>')
++step(4,"Boss battle",S.boss[id]?"✅ Boss defeated!":"Get 4 out of 5 to finish this topic.",'<button class="btn p" onclick="boss(\''+id+'\')">⚔️ '+(S.boss[id]?"Fight again":"Fight the boss")+'</button>')
++step5(id)
++(S.boss[id]&&nt?'<button class="btn p" style="text-align:center" onclick="topic(\''+nt.id+'\')">Next topic: '+nt.name+' →</button>':"")}
+function learn(){$("app").innerHTML='<h1>Learn</h1><div class="grid"><button class="btn p" onclick="flash()">🃏 Flashcards</button><button class="btn p" onclick="quiz()">⚡ Quick Quiz (10 questions)</button></div><h2>Boss Battles ⚔️</h2><p>Answer 4 out of 5 correctly to win. Worth a 100 XP bonus.</p><div class="grid">'+T.map(t=>'<button class="btn" style="background:'+t.col+'55" onclick="boss(\''+t.id+'\')">'+t.ic+' '+t.name+(S.boss[t.id]?" ✅":"")+'</button>').join("")+'</div><p><small>More game modes are coming soon.</small></p>'}
+let fl={};
+function flash(tid){fl={tid:tid||"all",i:0,f:false};if(tid)S.lastAct=tid;fdeck()}
+function fdeck(){fl.d=shuf(T.filter(t=>fl.tid==="all"||t.id===fl.tid).reduce((a,t)=>a.concat(t.cards.map((c,i)=>({t,c,k:t.id+i}))),[]));fl.i=0;fshow()}
+function fshow(){const d=fl.d[fl.i];if(!d){$("app").innerHTML='<div class="card"><h2>Deck complete! 🎉</h2><button class="btn p" onclick="fdeck()">Go again</button><button class="btn" onclick="go(\'learn\')">Back</button></div>';return}
+const def=LV()==="sup"?d.c[1]:d.c[2],ext=LV()==="ext"?"<br><small>Challenge: explain this using an example from a sphere interaction.</small>":"";
+$("app").innerHTML='<h1>Flashcards</h1><select onchange="flash(this.value)"><option value="all">All topics</option>'+T.map(t=>'<option value="'+t.id+'"'+(t.id===fl.tid?" selected":"")+'>'+t.name+'</option>').join("")+'</select><p>Card '+(fl.i+1)+' of '+fl.d.length+'</p><div class="flip" onclick="this.classList.toggle(\'f\')"><div><p><b>'+d.c[0]+'</b></p><p>'+def+ext+'</p></div></div><p><small>Tap the card to flip it.</small></p><div class="grid"><button class="btn p" onclick="fgo(1)">✅ Got it</button><button class="btn" onclick="fgo(0)">🔁 Still learning</button></div>'}
+function fgo(ok){const d=fl.d[fl.i];if(ok){if(!S.known[d.k]){S.known[d.k]=1;xp(10)}}else delete S.known[d.k];save();fl.i++;fshow()}
+let Q={};
+function quiz(){Q={list:shuf(tag()).slice(0,10),i:0,c:0,xp:12,name:"Quick Quiz"};qshow()}
+function boss(id){const t=T.find(x=>x.id===id);S.lastAct=id;Q={list:shuf(t.qs.map(q=>({tid:id,q}))),i:0,c:0,xp:15,name:"Boss: "+t.name,boss:id};qshow()}
+function qshow(){const it=Q.list[Q.i];if(!it){const w=Q.boss&&Q.c>=4;if(w&&!S.boss[Q.boss]){S.boss[Q.boss]=1;xp(100)}if(!Q.boss&&Q.c===Q.list.length){S.perfect=true;xp(0)}save();
+$("app").innerHTML='<div class="card"><h2>'+(Q.boss?(w?"Boss defeated! ⚔️ +100 XP":"The boss survived. Try again!"):"Quiz complete!")+'</h2><p>Score: '+Q.c+' / '+Q.list.length+'</p><button class="btn p" onclick="'+(Q.boss?"boss('"+Q.boss+"')":"quiz()")+'">Play again</button><button class="btn" onclick="go(\'learn\')">Back</button></div>';return}
+const t=T.find(x=>x.id===it.tid),ord=shuf(it.q[1].map((o,i)=>[o,i]));
+$("app").innerHTML='<h1>'+Q.name+'</h1><div class="bar"><i style="width:'+Q.i/Q.list.length*100+'%"></i></div><div class="card"><span class="pill">'+t.name+'</span><h3>'+it.q[0]+'</h3><div id="o">'+ord.map((o,i)=>'<button class="opt" data-i="'+o[1]+'">'+o[0]+'</button>').join("")+'</div><p id="fb"></p></div>';
+document.querySelectorAll("#o .opt").forEach(b=>b.onclick=()=>{const ok=+b.dataset.i===it.q[2];document.querySelectorAll("#o .opt").forEach(x=>{x.disabled=true;if(+x.dataset.i===it.q[2])x.classList.add("ok")});if(!ok)b.classList.add("no");rec(it.tid,ok);if(ok){Q.c++;xp(Q.xp)}else save();$("fb").innerHTML=(ok?"✅ Correct! ":"❌ Not quite. ")+it.q[3]+'<br><button class="btn p" onclick="Q.i++;qshow()">Next</button>'})}
+function res(){$("app").innerHTML='<h1>Resources</h1><div class="grid">'+T.map(t=>{const r=RES[t.id];return'<div class="card" style="border-top:6px solid '+t.col+'"><h3>'+t.ic+' '+t.name+'</h3>'+[["slides","📊 Slides"],["video","🎬 Video"],["test","📝 Practice test"],["answers","✅ Test answers"]].map(x=>r[x[0]]?'<a class="btn" target="_blank" rel="noopener" href="'+r[x[0]]+'">'+x[1]+'</a>':'<div class="btn off">'+x[1]+' (coming soon)</div>').join("")+(LINKS[t.id]||[]).map(l=>'<a class="btn" target="_blank" rel="noopener" href="'+l[1]+'">'+l[0]+'</a>').join("")+'<button class="btn" onclick="flash(\''+t.id+'\')">🃏 Flashcards</button><button class="btn" onclick="boss(\''+t.id+'\')">⚔️ Boss battle</button></div>'}).join("")+'</div>'}
+function task(){$("app").innerHTML='<h1>Tasks</h1>'+TASKS.map(t=>'<details><summary>'+t.name+' <span class="pill">'+t.type+'</span></summary><p><b>Topic:</b> '+t.topic+'<br><b>Conditions:</b> '+t.cond+'</p><p>'+t.detail+'</p>'+(t.link?'<a class="btn p" target="_blank" rel="noopener" href="'+t.link+'">Open task sheet</a>':"")+'</details>').join("")}
+function prog(){$("app").innerHTML='<h1>My Progress</h1>'+T.map(t=>{const p=S.prog[t.id]||{c:0,t:0},a=p.t?Math.round(p.c/p.t*100):0;return'<div class="card"><b>'+t.ic+' '+t.name+'</b><div class="bar"><i style="width:'+a+'%;background:'+t.col+'"></i></div><small>'+a+'% accuracy ('+p.c+' of '+p.t+' answers)</small></div>'}).join("")+'<h2>Badges</h2><div class="grid">'+BADGES.map(b=>'<div class="badge'+(S.badges[b[1]]?"":" lock")+'"><div style="font-size:2em">'+b[0]+'</div><b>'+b[1]+'</b><br><small>'+b[2]+'</small></div>').join("")+'</div>'}
+if(!S.eng)gate();go("home");
+</script></body></html>
